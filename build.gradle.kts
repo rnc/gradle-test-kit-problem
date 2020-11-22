@@ -1,16 +1,12 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.freefair.gradle.plugins.lombok.LombokExtension
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
 import java.util.*
 
 plugins {
     java
-    signing
     `maven-publish`
-//    idea
     id("com.adarshr.test-logger") version "2.1.0"
     id("com.github.johnrengelman.shadow") version "5.2.0"
     id("com.gradle.plugin-publish") version "0.11.0"
@@ -41,7 +37,6 @@ allprojects {
             url = uri("http://maven.repository.redhat.com/techpreview/all")
         }
     }
-//    apply(plugin = "idea")
 }
 
 subprojects {
@@ -72,19 +67,15 @@ subprojects {
         enabled = false
     }
 
-    if (project.name == "common" || project.name == "cli") {
-        apply(plugin = "java-library")
-    } else {
-        // Don't apply Gradle plugin code to the cli tool.
-        apply(plugin = "java-gradle-plugin")
-        apply(plugin = "com.gradle.plugin-publish")
+    apply(plugin = "java-gradle-plugin")
+    apply(plugin = "com.gradle.plugin-publish")
 
-        tasks.withType<ShadowJar> {
-            dependencies {
-                exclude(dependency("org.slf4j:slf4j-api:${project.extra.get("slf4jVersion")}"))
-            }
+    tasks.withType<ShadowJar> {
+        dependencies {
+            exclude(dependency("org.slf4j:slf4j-api:${project.extra.get("slf4jVersion")}"))
         }
     }
+
     if ( project.name != "common") {
         apply(plugin = "signing")
         apply(plugin = "maven-publish")

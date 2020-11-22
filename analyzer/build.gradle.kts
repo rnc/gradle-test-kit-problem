@@ -24,18 +24,12 @@ dependencies {
     shadow(localGroovy())
     shadow(gradleApi())
     compile("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
-//    compile("org.aeonbits.owner:owner-java8:${project.extra.get("ownerVersion")}")
 
-//    testImplementation(testFixtures(project(":common")))
-//    testCompile(project(":common"))
     testCompile(gradleTestKit())
     testCompile("junit:junit:${project.extra.get("junitVersion")}")
     testCompile("com.github.stefanbirkner:system-rules:${project.extra.get("systemRulesVersion")}")
     testCompile("org.assertj:assertj-core:${project.extra.get("assertjVersion")}")
-//    testCompile("org.jboss.byteman:byteman-bmunit:${project.extra.get("bytemanVersion")}")
     testCompile (files ("${System.getProperty("java.home")}/../lib/tools.jar") )
-    testCompile("org.mockito:mockito-core:2.27.0")
-    testCompile("com.github.tomakehurst:wiremock-jre8:2.26.3")
     testCompile(gradleKotlinDsl())
 }
 
