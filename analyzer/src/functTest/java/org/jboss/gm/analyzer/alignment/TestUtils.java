@@ -55,7 +55,7 @@ public final class TestUtils {
         final List<String> allArguments = new ArrayList<>(systemPropsList.size() + 4);
         allArguments.add("-DgmeFunctionalTest=true"); // Used to indicate for the plugin to reinitialise the configuration.
         allArguments.add("--stacktrace");
-        allArguments.add("--debug");
+        allArguments.add("--info");
         allArguments.add(AlignmentTask.NAME);
         allArguments.addAll(systemPropsList);
 
@@ -63,9 +63,9 @@ public final class TestUtils {
                 .withProjectDir(projectRoot)
                 .withArguments(allArguments)
         //   .withGradleVersion( "6.4.1" )
-        //   .withDebug(true)
-                .forwardOutput()
-                .withPluginClasspath();
+               .withDebug(true)
+               .forwardOutput()
+               .withPluginClasspath();
 
         boolean expectFailure = false;
         if (expectFailure) {
