@@ -15,36 +15,38 @@ gradlePlugin {
             displayName = "GME Manipulation Plugin"
         }
     }
-    // Disable creation of the plugin marker pom.
-    this.isAutomatedPublishing = false
+     // Disable creation of the plugin marker pom.
+     this.isAutomatedPublishing = false
 }
 
 dependencies {
-    compile(localGroovy())
-    compile(gradleApi())
-    compile("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
-    testCompile(gradleTestKit())
+    api(gradleApi())
+    api("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
+    testImplementation(gradleTestKit())
 
-    testCompile("junit:junit:${project.extra.get("junitVersion")}")
-    testCompile("com.github.stefanbirkner:system-rules:${project.extra.get("systemRulesVersion")}")
-    testCompile("org.assertj:assertj-core:${project.extra.get("assertjVersion")}")
-    testCompile (files ("${System.getProperty("java.home")}/../lib/tools.jar") )
-    testCompile(gradleKotlinDsl())
+    testImplementation("junit:junit:${project.extra.get("junitVersion")}")
+    testImplementation("com.github.stefanbirkner:system-rules:${project.extra.get("systemRulesVersion")}")
+    testImplementation("org.assertj:assertj-core:${project.extra.get("assertjVersion")}")
 }
 
-tasks.test {
-    systemProperties["jdk.attach.allowAttachSelf"] = "true"
-}
 
-// separate source set and task for functional tests
-
-sourceSets.create("functionalTest") {
+val functionalTestSourceSet = sourceSets.create("functionalTest") {
     java.srcDir("src/functTest/java")
     resources.srcDir("src/functTest/resources")
+
     // Force the addition of the plugin-under-test-metadata.properties else there are problems under Gradle >= 6.
-    runtimeClasspath += layout.files(project.buildDir.toString() + "/pluginUnderTestMetadata")
+    // runtimeClasspath += layout.files(project.buildDir.toString() + "/pluginUnderTestMetadata")
+
     compileClasspath += sourceSets["main"].output + configurations.testRuntime
     runtimeClasspath += output + compileClasspath
+}
+gradlePlugin.testSourceSets(functionalTestSourceSet)
+
+configurations.getByName("functionalTestImplementation").apply {
+    extendsFrom(configurations.getByName("testImplementation"))
+}
+configurations.getByName("functionalTestRuntime").apply {
+    extendsFrom(configurations.getByName("testRuntime"))
 }
 
 val functionalTest = task<Test>("functionalTest") {
@@ -57,6 +59,7 @@ val functionalTest = task<Test>("functionalTest") {
     environment("DA_ENDPOINT_URL", "http://localhost:8089/da/rest/v-1")
     systemProperties["jdk.attach.allowAttachSelf"] = "true"
 }
+
 
 val testJar by tasks.registering(Jar::class) {
     mustRunAfter(tasks["functionalTest"])
