@@ -20,26 +20,34 @@ gradlePlugin {
 }
 
 dependencies {
-    api(gradleApi())
-    api("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
+    implementation(gradleApi())
     testImplementation(gradleTestKit())
+    testImplementation("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
 
     testImplementation("junit:junit:${project.extra.get("junitVersion")}")
     testImplementation("com.github.stefanbirkner:system-rules:${project.extra.get("systemRulesVersion")}")
     testImplementation("org.assertj:assertj-core:${project.extra.get("assertjVersion")}")
+
+    testRuntime("commons-io:commons-io:2.6")
+    implementation("org.commonjava.maven.ext:pom-manipulation-annotation:${project.extra.get("pmeVersion")}")
+    implementation("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
 }
 
-
 val functionalTestSourceSet = sourceSets.create("functionalTest") {
+
     java.srcDir("src/functTest/java")
     resources.srcDir("src/functTest/resources")
 
     // Force the addition of the plugin-under-test-metadata.properties else there are problems under Gradle >= 6.
     // runtimeClasspath += layout.files(project.buildDir.toString() + "/pluginUnderTestMetadata")
 
-    compileClasspath += sourceSets["main"].output + configurations.testRuntime
+//    compileClasspath += sourceSets.main.get().output + configurations.testRuntime
+//    runtimeClasspath += sourceSets.main.get().output + compileClasspath
+
+    compileClasspath += sourceSets["main"].output + configurations.testRuntimeClasspath
     runtimeClasspath += output + compileClasspath
 }
+
 gradlePlugin.testSourceSets(functionalTestSourceSet)
 
 configurations.getByName("functionalTestImplementation").apply {
