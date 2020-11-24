@@ -1,6 +1,5 @@
 package org.jboss.gm.analyzer.alignment;
 
-import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -82,17 +81,15 @@ public final class TestUtils {
 
     public static class TestManipulationModel  {
 
-        @Getter
         private final File project;
 
         public TestManipulationModel( File p) {
             this.project = p;
-//            group = m.getGroup();
-//            name = m.getName();
-//            version = m.getVersion();
-//            alignedDependencies = m.getAlignedDependencies();
-//            children = m.getChildren();
-//            setOriginalVersion(m.getOriginalVersion());
+        }
+
+        public File getProject() {
+            return project;
         }
     }
 }
+

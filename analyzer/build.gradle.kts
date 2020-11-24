@@ -20,12 +20,11 @@ gradlePlugin {
 }
 
 dependencies {
-    // the shadow configuration is used in order to avoid adding gradle and groovy stuff to the shadowed jar
-    shadow(localGroovy())
-    shadow(gradleApi())
+    compile(localGroovy())
+    compile(gradleApi())
     compile("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
-
     testCompile(gradleTestKit())
+
     testCompile("junit:junit:${project.extra.get("junitVersion")}")
     testCompile("com.github.stefanbirkner:system-rules:${project.extra.get("systemRulesVersion")}")
     testCompile("org.assertj:assertj-core:${project.extra.get("assertjVersion")}")
@@ -47,15 +46,6 @@ sourceSets.create("functionalTest") {
     compileClasspath += sourceSets["main"].output + configurations.testRuntime
     runtimeClasspath += output + compileClasspath
 }
-
-//idea.module {
-//    val testSources = testSourceDirs
-//    testSources.addAll(project.sourceSets.getByName("functionalTest").java.srcDirs)
-//    val testResources = testResourceDirs
-//    testResources.addAll(project.sourceSets.getByName("functionalTest").resources.srcDirs)
-//    testSourceDirs = testSources
-//    testResourceDirs = testResources
-//}
 
 val functionalTest = task<Test>("functionalTest") {
     description = "Runs functional tests"
@@ -82,25 +72,4 @@ val testSourcesJar by tasks.registering(Jar::class) {
     from(sourceSets.getByName("functionalTest").java.srcDirs)
 }
 
-configure<PublishingExtension> {
-    publications {
-        getByName<MavenPublication>("shadow") {
-            artifact(testJar.get())
-            artifact(testSourcesJar.get())
-        }
-    }
-}
-
 tasks.check { dependsOn(functionalTest) }
-
-tasks {
-    //this is done in order to use the proper version in the init gradle files
-    "processResources"(ProcessResources::class) {
-        filesMatching("gme.gradle") {
-            expand(project.properties)
-        }
-        filesMatching("analyzer-init.gradle") {
-            expand(project.properties)
-        }
-    }
-}
