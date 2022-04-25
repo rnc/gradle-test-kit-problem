@@ -28,7 +28,7 @@ dependencies {
     testImplementation("com.github.stefanbirkner:system-rules:${project.extra.get("systemRulesVersion")}")
     testImplementation("org.assertj:assertj-core:${project.extra.get("assertjVersion")}")
 
-    testRuntime("commons-io:commons-io:2.6")
+    testRuntimeOnly("commons-io:commons-io:2.6")
     implementation("org.commonjava.maven.ext:pom-manipulation-annotation:${project.extra.get("pmeVersion")}")
     implementation("org.commonjava.maven.ext:pom-manipulation-common:${project.extra.get("pmeVersion")}")
 }
@@ -51,10 +51,10 @@ val functionalTestSourceSet = sourceSets.create("functionalTest") {
 gradlePlugin.testSourceSets(functionalTestSourceSet)
 
 configurations.getByName("functionalTestImplementation").apply {
-    extendsFrom(configurations.getByName("testImplementation"))
+    extendsFrom(configurations["testImplementation"])
 }
-configurations.getByName("functionalTestRuntime").apply {
-    extendsFrom(configurations.getByName("testRuntime"))
+configurations.getByName("functionalTestRuntimeOnly").apply {
+    extendsFrom(configurations["testRuntimeOnly"])
 }
 
 val functionalTest = task<Test>("functionalTest") {
